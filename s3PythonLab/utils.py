@@ -42,8 +42,7 @@ def setup_bucket(s3, bucket, region):
         if error_code == 404:
             exists = False
             # Bucket does not exist, so create it
-            s3.create_bucket(Bucket=bucket, CreateBucketConfiguration={
-                             'LocationConstraint': region})
+            s3.create_bucket(Bucket=bucket)
             print('Created bucket: ' + bucket)
         else:
             print("Specify a unique bucket name. Bucket names can contain lowercase letters, numbers, and hyphens.")
