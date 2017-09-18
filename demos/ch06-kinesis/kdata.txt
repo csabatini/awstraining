@@ -1,0 +1,6 @@
+{"SensorId":1, "Time":0, "Reading":20}
+{"SensorId":2, "Time":0, "Reading":21}
+{"SensorId":1, "Time":1, "Reading":20}
+{"SensorId":2, "Time":1, "Reading":22}
+{"SensorId":1, "Time":2, "Reading":20}
+{"SensorId":2, "Time":2, "Reading":23}

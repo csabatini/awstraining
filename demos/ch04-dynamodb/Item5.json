@@ -1,0 +1,10 @@
+{
+    "TableName": "Music",
+    "Item": {
+        "Artist": { "S": "The Acme Band" },
+        "SongTitle": { "S": "Look Out, World" },
+        "AlbumTitle": { "S": "The Buck Starts Here" },
+        "Price": { "N": "0.99" },
+        "Genre": { "S": "Rock" }
+    }
+}

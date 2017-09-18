@@ -1,0 +1,25 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "A sample template",
+  "Resources" : {
+    "LinuxT2Micro" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties" : {
+        "ImageId" : "ami-1e299d7e",
+        "InstanceType" : "t2.micro",
+        "KeyName" : "l1-kp-uswest2",
+        "BlockDeviceMappings" : [
+          {
+            "DeviceName" : "/dev/xvda",
+            "Ebs" : {
+              "VolumeType" : "io1",
+              "Iops" : "100",
+              "DeleteOnTermination" : "true",
+              "VolumeSize" : "8"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

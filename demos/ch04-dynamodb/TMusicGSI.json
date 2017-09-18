@@ -1,0 +1,25 @@
+[
+  {
+  "Create": {
+      "IndexName": "MusicAlbumSong",
+      "KeySchema": [
+		{
+		  "AttributeName": "AlbumTitle",
+		  "KeyType": "HASH"
+		},
+		{ 
+		    "AttributeName": "SongTitle", 
+		    "KeyType": "RANGE" 
+		}
+      ],
+      "Projection": {
+        "ProjectionType": "INCLUDE",
+        "NonKeyAttributes": ["Price", "Year"]
+      },
+      "ProvisionedThroughput": {
+        "ReadCapacityUnits": 1,
+        "WriteCapacityUnits": 1
+      }
+  }  
+  }
+]

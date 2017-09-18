@@ -1,0 +1,11 @@
+{
+    "TableName": "Music",
+    "Item": {
+        "Artist": { "S": "No One You Know" },
+        "SongTitle": { "S": "My Dog Spot" },
+        "AlbumTitle": { "S": "Hey Now" },
+        "Price": { "N": "1.98" },
+        "Genre": { "S": "Country" },
+        "CriticRating": { "N": "8.4"}
+    }
+}

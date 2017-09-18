@@ -1,0 +1,20 @@
+{
+    "TableName": "Music",
+    "Item": {
+        "Artist": { "S": "The Acme Band" },
+        "SongTitle": { "S": "Still In Love" },
+        "AlbumTitle": { "S": "The Buck Starts Here" },
+        "Price": { "N": "2.47" },
+        "Genre": { "S": "Rock" },
+		"PromotionInfo": { "M": {
+            "RadioStationsPlaying": { "SS": [
+                 "KHCR", "KBQX", "WTNR", "WJJH"
+            ]},
+            "TourDates": { "M": {
+                "Seattle": {"S": "20150625" },
+                "Cleveland": {"S": "20150630" }
+            }},
+            "Rotation": { "S": "Heavy" }
+        }}
+    }
+}
