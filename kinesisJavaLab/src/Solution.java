@@ -1,15 +1,5 @@
 // Copyright 2017 Amazon Web Services, Inc. or its affiliates. All rights reserved.
 
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.regions.Region;
-import com.amazonaws.services.kinesis.clientlibrary.interfaces.IRecordProcessorFactory;
-import com.amazonaws.services.kinesis.clientlibrary.lib.worker.InitialPositionInStream;
-import com.amazonaws.services.kinesis.clientlibrary.lib.worker.KinesisClientLibConfiguration;
-import com.amazonaws.services.kinesis.clientlibrary.lib.worker.Worker;
-import com.amazonaws.services.kinesis.model.Record;
-
-import java.nio.ByteBuffer;
-
 public class Solution {
 
 //DONE
@@ -58,27 +48,30 @@ public class Solution {
 //        return future;
 //    }
 
-    public static KinesisClientLibConfiguration createKinesisConfig(
-            String appName,
-            String streamName,
-            AWSCredentialsProvider credentialsProvider,
-            String workerId,
-            InitialPositionInStream position,
-            Region region) {
-        KinesisClientLibConfiguration kinesisClientLibConfiguration =
-                new KinesisClientLibConfiguration(appName, streamName, credentialsProvider, workerId);
-        kinesisClientLibConfiguration.withInitialPositionInStream(position);
-        kinesisClientLibConfiguration.withRegionName(region.getName());
-        return kinesisClientLibConfiguration;
-    }
+// DONE
+//    public static KinesisClientLibConfiguration createKinesisConfig(
+//            String appName,
+//            String streamName,
+//            AWSCredentialsProvider credentialsProvider,
+//            String workerId,
+//            InitialPositionInStream position,
+//            Region region) {
+//        KinesisClientLibConfiguration kinesisClientLibConfiguration =
+//                new KinesisClientLibConfiguration(appName, streamName, credentialsProvider, workerId);
+//        kinesisClientLibConfiguration.withInitialPositionInStream(position);
+//        kinesisClientLibConfiguration.withRegionName(region.getName());
+//        return kinesisClientLibConfiguration;
+//    }
 
-    public static Worker createWorker(KinesisClientLibConfiguration kinesisClientLibConfiguration) {
-        IRecordProcessorFactory recordProcessorFactory = new SensorRecordProcessorFactory();
-        Worker worker = new Worker(recordProcessorFactory, kinesisClientLibConfiguration);
-        return worker;
-    }
+// DONE
+//    public static Worker createWorker(KinesisClientLibConfiguration kinesisClientLibConfiguration) {
+//        IRecordProcessorFactory recordProcessorFactory = new SensorRecordProcessorFactory();
+//        Worker worker = new Worker(recordProcessorFactory, kinesisClientLibConfiguration);
+//        return worker;
+//    }
 
-    public static ByteBuffer getRecordData(Record record) {
-        return record.getData();
-    }
+// DONE
+//    public static ByteBuffer getRecordData(Record record) {
+//        return record.getData();
+//    }
 }
