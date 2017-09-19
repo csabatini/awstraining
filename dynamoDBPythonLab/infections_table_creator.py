@@ -1,10 +1,9 @@
 # Copyright 2017 Amazon Web Services, Inc. or its affiliates. All rights
 # reserved.
 
-import boto3
 import time
 import utils
-import solution as dynamodb_solution
+from utils import session
 
 INFECTIONS_TABLE_NAME = utils.LAB_S3_INFECTIONS_TABLE_NAME
 HTTP_STATUS_SUCCESS = 200
@@ -20,12 +19,12 @@ def remove_infections_table():
         print("{0} Table exists and will be removed.".format(table_name))
         try:
             rval = False
-            dynamoDB = boto3.resource('dynamodb')
+            dynamoDB = session.resource('dynamodb')
             table = dynamoDB.Table(table_name)
             resp = table.delete()
             time.sleep(15)
             if resp['ResponseMetadata'][
-                    'HTTPStatusCode'] == HTTP_STATUS_SUCCESS:
+                'HTTPStatusCode'] == HTTP_STATUS_SUCCESS:
                 rval = True
                 print("{0} Table has been deleted.".format(table_name))
         except Exception as err:
@@ -63,8 +62,7 @@ def create_infections_table(
         patient_id_attr_name,
         city_attr_name,
         date_attr_name):
-
-    dynamodb = boto3.resource('dynamodb')
+    dynamodb = session.resource('dynamodb')
 
     # The variables below transform the arguments into the parameters expected by dynamodb.create_table.
 
@@ -73,12 +71,12 @@ def create_infections_table(
     provisioned_throughput = {'ReadCapacityUnits': 5, 'WriteCapacityUnits': 10}
 
     global_secondary_indexes = [{
-            'IndexName': ddb_gsi_name,
-            'KeySchema': [
-                {'AttributeName': city_attr_name, 'KeyType': 'HASH'},
-                {'AttributeName': date_attr_name, 'KeyType': 'RANGE'}],
-            'Projection': {'ProjectionType': 'ALL'},
-            'ProvisionedThroughput': {'ReadCapacityUnits': 5, 'WriteCapacityUnits': 10}
+        'IndexName': ddb_gsi_name,
+        'KeySchema': [
+            {'AttributeName': city_attr_name, 'KeyType': 'HASH'},
+            {'AttributeName': date_attr_name, 'KeyType': 'RANGE'}],
+        'Projection': {'ProjectionType': 'ALL'},
+        'ProvisionedThroughput': {'ReadCapacityUnits': 5, 'WriteCapacityUnits': 10}
     }]
     attribute_definitions = [
         {'AttributeName': patient_id_attr_name, 'AttributeType': 'S'},
@@ -97,17 +95,26 @@ def create_infections_table(
     #   GlobalSecondaryIndexes = global_secondary_indexes
 
 
-    dynamodb_solution.create_infections_table(
-        dynamodb,
-        table_name,
-        key_schema,
-        attribute_definitions,
-        provisioned_throughput,
-        global_secondary_indexes)
-
+    # dynamodb_solution.create_infections_table(
+    #     dynamodb,
+    #     table_name,
+    #     key_schema,
+    #     attribute_definitions,
+    #     provisioned_throughput,
+    #     global_secondary_indexes)
+    dynamo_client = session.client('dynamodb')
+    table = dynamo_client.create_table(
+        AttributeDefinitions=attribute_definitions,
+        TableName=table_name,
+        KeySchema=key_schema,
+        ProvisionedThroughput=provisioned_throughput,
+        GlobalSecondaryIndexes=global_secondary_indexes
+    )
+    print('Creating table with arn: {}'.format(table['TableDescription']['TableArn']))
 
     # Wait until the table is created before returning
     dynamodb.meta.client.get_waiter('table_exists').wait(TableName=table_name)
+    print('Finished creating table with arn: {}'.format(table['TableDescription']['TableArn']))
 
 
 if __name__ == '__main__':

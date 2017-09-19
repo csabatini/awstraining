@@ -2,8 +2,7 @@
 # reserved.
 
 import boto3
-import botocore
-from botocore.exceptions import NoCredentialsError, ClientError, EndpointConnectionError
+from botocore.exceptions import ClientError
 
 # 'EU'|'eu-west-1'|'us-west-1'|'us-west-2'|'ap-southeast-1'|'ap-southeast-2'|'ap-northeast-1'|'sa-east-1'|'cn-north-1'|'eu-central-1'
 LAB_S3_BUCKET_NAME = "us-west-2-aws-staging"
@@ -13,11 +12,13 @@ LAB_S3_PATIENT_REPORT_PREFIX = "awsu-ilt/AWS-100-DEV/v2.2/binaries/input/lab-3-d
 LAB_S3_FILE_KEY = "InfectionsData.csv"
 LAB_S3_INFECTIONS_TABLE_NAME = "Infections"
 
+session = boto3.Session(profile_name='training')
+
 
 def is_table_active(tableName=LAB_S3_INFECTIONS_TABLE_NAME):
     # Check if the given table exists and active
     try:
-        resource = boto3.resource('dynamodb')
+        resource = session.resource('dynamodb')
         table = resource.Table(tableName)
         if table.table_status == 'ACTIVE':
             return True

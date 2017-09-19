@@ -1,11 +1,8 @@
 # Copyright 2017 Amazon Web Services, Inc. or its affiliates. All rights
 # reserved.
 
-import sys
-from datetime import datetime, timedelta
-import boto3
 import utils
-import solution as dynamodb_solution
+from utils import session
 
 BUCKET_NAME = utils.LAB_S3_BUCKET_NAME
 BUCKET_REGION = utils.LAB_S3_BUCKET_REGION
@@ -13,11 +10,12 @@ PATIENT_REPORT_PREFIX = utils.LAB_S3_PATIENT_REPORT_PREFIX
 TABLE_NAME = utils.LAB_S3_INFECTIONS_TABLE_NAME
 HTTP_STATUS_SUCCESS = 200
 
+
 # Sample reports exist for patient ids 1, 2, 3
 
 
 def link_patient_report(table_name=TABLE_NAME):
-    dynamodb = boto3.resource('dynamodb')
+    dynamodb = session.resource('dynamodb')
     # Update Infections table item for patient ids 1, 2, 3 with the report url
     try:
         for i in range(1, 4):
@@ -41,8 +39,23 @@ def update_item_with_link(dynamodb, patient_id, report_url, table_name):
     """
 
     # STUDENT TODO 4: Replace the solution with your own code
-    dynamodb_solution.update_item_with_link(
-        dynamodb, table_name, patient_id, report_url)
+    table = dynamodb.Table(table_name)
+    # dynamodb_solution.update_item_with_link(
+    #     dynamodb, table_name, patient_id, report_url)
+    try:
+        # Update item in table for the given patient_id key.
+        resp = table.update_item(
+            Key={'PatientId': str(patient_id)},
+            UpdateExpression='set PatientReportUrl=:val1',
+            ExpressionAttributeValues={':val1': {'S': report_url}})
+        print("Item updated")
+        print(
+            "PatientId:{0}, PatientReportUrl:{1}".format(
+                patient_id,
+                report_url))
+    except Exception as err:
+        print("Error message {0}".format(err))
+
 
 if __name__ == '__main__':
     print("Update report url for patient ids 1, 2, 3:")

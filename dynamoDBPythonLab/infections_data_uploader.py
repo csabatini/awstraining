@@ -2,10 +2,11 @@
 # reserved.
 
 import csv
-import boto3
+
 from botocore.exceptions import ClientError
+
 import utils
-import solution as dynamodb_solution
+from utils import session
 
 BUCKET_NAME = utils.LAB_S3_BUCKET_NAME
 BUCKET_REGION = utils.LAB_S3_BUCKET_REGION
@@ -25,7 +26,7 @@ def load_infections_data(
     try:
         # Create an S3 resource to download the infections data file from the
         # S3 bucket
-        S3 = boto3.resource('s3', bucketRegion)
+        S3 = session.resource('s3', bucketRegion)
         try:
             # Check if you have permissions to access the bucket and then
             # retrieve a reference to it
@@ -50,10 +51,10 @@ def load_infections_data(
             num_failures = 9999
             return num_failures
         print("Reading infections data from file, going to begin upload")
-        with open(FName, newline='') as fh:
+        with open(FName) as fh:
             reader = csv.DictReader(fh, delimiter=DELIMITER)
             # Create a DynamoDB resource
-            dynamodb = boto3.resource('dynamodb')
+            dynamodb = session.resource('dynamodb')
 
             # Retrieve a reference to the Infections table
             infections_table = dynamodb.Table(INFECTIONS_TABLE_NAME)
@@ -66,6 +67,7 @@ def load_infections_data(
                         row['PatientId'],
                         row['City'],
                         row['Date'])
+                    print("Added item: {}".format(row))
                 except Exception as err:
                     print("Error message {0}".format(err))
                     num_failures += 1
@@ -86,10 +88,13 @@ def add_item_to_table(infections_table, patient_id, city, date):
     city -- City Name
     date -- Date
     """
-
+    infections_table.put_item(
+        Item={'PatientId': patient_id, 'City': city, 'Date': date}
+    )
     # STUDENT TODO 2: Replace the solution with your own code
-    dynamodb_solution.add_item_to_table(
-        infections_table, patient_id, city, date)
+    # dynamodb_solution.add_item_to_table(
+    #     infections_table, patient_id, city, date)
+
 
 if __name__ == '__main__':
     print("Going to load data")
