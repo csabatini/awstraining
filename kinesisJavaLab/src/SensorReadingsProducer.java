@@ -1,5 +1,6 @@
 // Copyright 2017 Amazon Web Services, Inc. or its affiliates. All rights reserved.
 
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.services.kinesis.producer.KinesisProducer;
 import com.amazonaws.services.kinesis.producer.KinesisProducerConfiguration;
@@ -117,7 +118,11 @@ public class SensorReadingsProducer {
    */
   private static KinesisProducerConfiguration createKinesisProducerConfig() {
     // STUDENT TODO 4: Replace the solution with your own code
-    return Solution.createKinesisProducerConfig(REGION);
+//    return Solution.createKinesisProducerConfig(REGION);
+    KinesisProducerConfiguration producerConfig = new KinesisProducerConfiguration();
+    producerConfig.setCredentialsProvider(new ProfileCredentialsProvider("training"));
+    producerConfig.setRegion("us-east-1");
+    return producerConfig;
   }
 
   /**
@@ -128,7 +133,8 @@ public class SensorReadingsProducer {
    */
   private static KinesisProducer createKinesisProducer(KinesisProducerConfiguration config) {
     // STUDENT TODO 5: Replace the solution with your own code
-    return Solution.createKinesisProducer(config);
+//    return Solution.createKinesisProducer(config);
+    return new KinesisProducer(config);
   }
 
   /**
@@ -141,6 +147,7 @@ public class SensorReadingsProducer {
   private static ListenableFuture<UserRecordResult> addUserRecordToStream(
       KinesisProducer kinesisProducer, SensorData sensorData) {
     // STUDENT TODO 6: Replace the solution with your own code
-    return Solution.addUserRecordToStream(STREAM_NAME, kinesisProducer, sensorData);
+//    return Solution.addUserRecordToStream(STREAM_NAME, kinesisProducer, sensorData);
+    return kinesisProducer.addUserRecord(STREAM_NAME, sensorData.sensorId, sensorData.data);
   }
 }

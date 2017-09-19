@@ -7,10 +7,6 @@ import com.amazonaws.services.kinesis.clientlibrary.lib.worker.InitialPositionIn
 import com.amazonaws.services.kinesis.clientlibrary.lib.worker.KinesisClientLibConfiguration;
 import com.amazonaws.services.kinesis.clientlibrary.lib.worker.Worker;
 import com.amazonaws.services.kinesis.model.Record;
-import com.amazonaws.services.kinesis.producer.KinesisProducer;
-import com.amazonaws.services.kinesis.producer.KinesisProducerConfiguration;
-import com.amazonaws.services.kinesis.producer.UserRecordResult;
-import com.google.common.util.concurrent.ListenableFuture;
 
 import java.nio.ByteBuffer;
 
@@ -31,6 +27,7 @@ public class Solution {
 //    kinesis.createStream(createStreamRequest);
 //  }
 
+// DONE
 //    public static String getStreamStatus(AmazonKinesisClient kinesis, String streamName) {
 //        String streamStatus = null;
 //        DescribeStreamRequest describeStreamRequest = new DescribeStreamRequest();
@@ -40,23 +37,26 @@ public class Solution {
 //        return streamStatus;
 //    }
 
-    public static KinesisProducerConfiguration createKinesisProducerConfig(Region region) {
-        KinesisProducerConfiguration config = new KinesisProducerConfiguration();
-        config.setRegion(region.getName());
-        return config;
-    }
+// DONE
+//    public static KinesisProducerConfiguration createKinesisProducerConfig(Region region) {
+//        KinesisProducerConfiguration config = new KinesisProducerConfiguration();
+//        config.setRegion(region.getName());
+//        return config;
+//    }
 
-    public static KinesisProducer createKinesisProducer(KinesisProducerConfiguration config) {
-        KinesisProducer kinesisProducer = new KinesisProducer(config);
-        return kinesisProducer;
-    }
+// DONE
+//    public static KinesisProducer createKinesisProducer(KinesisProducerConfiguration config) {
+//        KinesisProducer kinesisProducer = new KinesisProducer(config);
+//        return kinesisProducer;
+//    }
 
-    public static ListenableFuture<UserRecordResult> addUserRecordToStream(
-            String streamName, KinesisProducer kinesisProducer, SensorData sensorData) {
-        ListenableFuture<UserRecordResult> future =
-                kinesisProducer.addUserRecord(streamName, sensorData.sensorId, sensorData.data);
-        return future;
-    }
+// DONE
+//    public static ListenableFuture<UserRecordResult> addUserRecordToStream(
+//            String streamName, KinesisProducer kinesisProducer, SensorData sensorData) {
+//        ListenableFuture<UserRecordResult> future =
+//                kinesisProducer.addUserRecord(streamName, sensorData.sensorId, sensorData.data);
+//        return future;
+//    }
 
     public static KinesisClientLibConfiguration createKinesisConfig(
             String appName,
