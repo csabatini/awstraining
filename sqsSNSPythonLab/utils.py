@@ -1,10 +1,13 @@
 # Copyright 2017 Amazon Web Services, Inc. or its affiliates. All rights
 # reserved.
 
+from boto3 import Session
+
 NUM_MESSAGES = 10
 
 # The Order class is a simple Python class used to hold order information.
 
+session = Session(profile_name="training")
 
 class Order:
 

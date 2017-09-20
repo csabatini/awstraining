@@ -6,22 +6,23 @@ import time
 import utils
 import solution
 import boto3
+from utils import session
 
 QUEUE_NAME = "MySQSQueue_A"
 QUEUE_ATTR_NAME = "ApproximateNumberOfMessages"
 SLEEP = 10
 
+
 # The SQSConsumer class retrieves messages from an SQS queue.
 
 
 class SQSConsumer(threading.Thread):
-    sqs = boto3.resource('sqs')
-
     def __init__(self, threadID, name, counter):
         threading.Thread.__init__(self)
         self.threadID = threadID
         self.name = name
         self.counter = counter
+        self.sqs = session.resource('sqs')
 
     def run(self):
         print("SQSConsumer Thread running!")
@@ -40,7 +41,7 @@ class SQSConsumer(threading.Thread):
     def get_queue(self, sqsQueueName=QUEUE_NAME):
         queue = None
         try:
-            queue = get_sqs_queue(self.sqs, sqsQueueName)
+            queue = self.sqs.get_queue_by_name(QueueName=sqsQueueName)
         except Exception as err:
             print("Error Message {0}".format(err))
         return queue
@@ -61,12 +62,12 @@ class SQSConsumer(threading.Thread):
         try:
             queue = self.get_queue()
             if queue:
-                mesgs = get_messages(queue)
-                if not len(mesgs):
+                mesgs = queue.receive_messages(AttributeNames=['All'])
+                if len(mesgs) == 0:
                     print("There are no messages in Queue to display")
                     return num_msgs
                 for mesg in mesgs:
-                    attributes = get_attributes(mesg)
+                    attributes = mesg.attributes
                     sender_id = attributes.get('SenderId')
                     sent_timestamp = attributes.get('SentTimestamp')
 
@@ -104,7 +105,7 @@ def get_sqs_queue(sqs, queue_name):
     """
 
     # STUDENT TODO 6: Replace the solution with your own code
-    return solution.get_sqs_queue(sqs, queue_name)
+    # return solution.get_sqs_queue(sqs, queue_name)
 
 
 def get_messages(queue):
@@ -137,8 +138,8 @@ def delete_message(mesg):
     """
 
     # STUDENT TODO 9: Replace the solution with your own code
-    solution.delete_message(mesg)
-
+    # solution.delete_message(mesg)
+    mesg.delete()
 
 def main():
     try:
@@ -148,6 +149,7 @@ def main():
         print("Error Message {0}".format(err))
     thread1.join()
     return thread1
+
 
 if __name__ == '__main__':
     main()
