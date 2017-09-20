@@ -5,20 +5,16 @@ import memcache
 import sys
 import utils as dynamoDB_manager
 import solution
+import logging
 
+# DONE
 # STUDENT TODO 1: Set the cluster configuration endpoint
-CLUSTER_CONFIG_ENDPOINT = "<ElastiCache-Configuration-Endpoint>"
+CLUSTER_CONFIG_ENDPOINT = "qls-el-16rmxoe07lj3t.ou9bdw.cfg.usw2.cache.amazonaws.com:11211"
+
 
 # Welcome to the AWS Python SDK! Let's build a Pharmaceutical drug listing!
 
 
-def get_cache_item(client, cacheKey):
-    pharma_info = None
-    try:
-        pharma_info = client.get(cacheKey)
-    except Exception as err:
-        print("Error message: {0}".format(err))
-    return pharma_info
 
 # Returns pharmaceutical usage information for the given drug.
 # Attempts to retrieve item from cache.
@@ -26,51 +22,43 @@ def get_cache_item(client, cacheKey):
 # DynamoDB and updates cache.
 
 
-def get_pharma_info(drugName, clusterEndpoint=CLUSTER_CONFIG_ENDPOINT):
+def get_pharma_info(drugName):
     # Retrieves pharmaceutical usage information from cache for the given drug
     # name. Set the cache if not available
     pharma_info = None
     try:
-        mclient = memcache.Client([clusterEndpoint], debug=0)
-        pharma_info = get_cache_item(mclient, drugName)
+        mclient = create_memcached_client()
+        pharma_info = get_from_cache(mclient, drugName)
         if not pharma_info:
             pharma_info = dynamoDB_manager.get_info(drugName)
             if not pharma_info:
                 print("Given drug name not available in the table")
                 return None
-            set_pharma_item(mclient, drugName, pharma_info)
-            pharma_info = get_cache_item(mclient, drugName)
+            store_in_cache(mclient, drugName, pharma_info)
+            pharma_info = get_from_cache(mclient, drugName)
             if not pharma_info:
-                print(
-                    "Unable to set the cache for the given DrugName:{0}".format(drugName))
+                print("Unable to set the cache for the given DrugName:{0}".format(drugName))
+            else:
+                print("Pulled info from cache for the given DrugName:{0}".format(drugName))
     except Exception as err:
-        print("Error message: {0}".format(err))
+        logging.exception("Error")
     return pharma_info
-
-
-def set_pharma_item(client, cacheKey, usageInfo):
-    # Retrieves usage information from DynamoDB and then populates the cache
-    # with that information
-    try:
-        client.set(cacheKey, usageInfo, 3600)
-    except Exception as err:
-        print("Error message: {0}".format(err))
 
 
 def setup():
     dynamoDB_manager.setup()
 
 
-def create_memcached_client(memcache, clusterEndpoint):
+def create_memcached_client():
     """Create a client for Memcached
 
     Keyword arguments:
     memcache -- the memcache object
     clusterEndpoint -- memcached cluster endpoint
     """
-
     # STUDENT TODO 2: Replace the solution with your own code
-    return solution.create_memcached_client(memcache, clusterEndpoint)
+    # return solution.create_memcached_client(memcache, clusterEndpoint)
+    return memcache.Client([CLUSTER_CONFIG_ENDPOINT], debug=0)
 
 
 def get_from_cache(client, key):
@@ -82,7 +70,13 @@ def get_from_cache(client, key):
     """
 
     # STUDENT TODO 3: Replace the solution with your own code
-    return solution.get_from_cache(client, key)
+    # return solution.get_from_cache(client, key)
+    pharma_info = None
+    try:
+        pharma_info = client.get(key)
+    except Exception as err:
+        logging.exception("Error getting key: {}".format(key))
+    return pharma_info
 
 
 def store_in_cache(client, key, value):
@@ -95,14 +89,19 @@ def store_in_cache(client, key, value):
     """
 
     # STUDENT TODO 4: Replace the solution with your own code
-    solution.store_in_cache(client, key, value)
+    # solution.store_in_cache(client, key, value)
+    try:
+        client.set(key, value, 3600)
+    except Exception as err:
+        logging.exception("Error setting key: {}".format(key))
 
 
 def main(drugName):
-        # Setting up DynamoDB
+    # Setting up DynamoDB
     setup()
     pharma_info = get_pharma_info(drugName)
     return pharma_info
+
 
 if __name__ == '__main__':
     drugName = 'Octinoxate'

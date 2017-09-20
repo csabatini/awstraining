@@ -13,6 +13,8 @@ PHARMA_DATA_FILE_KEY = "awsu-ilt/AWS-100-DEV/v2.2/binaries/input/lab-8-elastiCac
 FILE_KEY = "PharmaListings.csv"
 DELIMITER = ","
 
+# session = boto3.Session(profile_name="training")
+
 
 def is_table_active(tableName=PHARMA_TABLE_NAME):
     # Is table active
@@ -74,7 +76,7 @@ def load_data(
             print("Downloading failed from S3 bucket")
             return False
         print("Loading pharmaceutical data from csv file to DynamoDB")
-        with open(fName, newline='') as fh:
+        with open(fName) as fh:
             reader = csv.DictReader(fh, delimiter=DELIMITER)
             print("Begin loading items ...")
             for row in reader:
@@ -85,7 +87,6 @@ def load_data(
                             'usage': row['Usage']})
                 except Exception as err:
                     print("Error message: {0}".format(err))
-                    numFailures += 1
             print("End loading items")
     except Exception as err:
         print("Failed creating item {0}".format(tableName))
