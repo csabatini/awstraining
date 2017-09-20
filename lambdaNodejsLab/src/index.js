@@ -47,8 +47,10 @@ exports.handler = function(event, context) {
       // Replace the call to solution.parmsForGet and provide your own 'params' object.
       // 'params' must include the Bucket (srcBucket) and Key (srcKey) parameters.
 
-      var params = solution.parmsForGet(srcBucket, srcKey);
-
+      var params = {
+        Bucket: srcBucket,
+        Key: srcKey
+      };
       s3.getObject(params, next);
     },
     function transform(response, next) {
@@ -62,7 +64,11 @@ exports.handler = function(event, context) {
       // Replace the call to solution.parmsForPut and provide your own 'params' object.
       // 'params' must include the Bucket (dstBucket), Key (dstKey) and Body (data) parameters.
 
-      var params = solution.parmsForPut(dstBucket, dstKey, data);
+      var params = {
+        Bucket: dstBucket,
+        Key: dstKey,
+        Body: data
+      };
 
       s3.putObject(params, next);
     }],

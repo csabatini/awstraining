@@ -3,7 +3,7 @@
     {
       "s3": {
         "bucket": {
-          "name": ""
+          "name": "csab-lambda-lab-input"
         },
         "object": {
           "key": "DrugAdverseEvents_September.txt"
